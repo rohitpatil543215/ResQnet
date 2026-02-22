@@ -6,6 +6,7 @@ export function initSocket(httpServer) {
     const allowedOrigins = [
         process.env.CLIENT_URL,
         'http://localhost:3000',
+        'http://localhost:3001',
         'http://localhost:5173',
         'http://127.0.0.1:3000',
         'http://127.0.0.1:5173',
@@ -13,7 +14,12 @@ export function initSocket(httpServer) {
 
     io = new Server(httpServer, {
         cors: {
-            origin: allowedOrigins,
+            origin: (origin, callback) => {
+                if (!origin) return callback(null, true);
+                if (allowedOrigins.includes(origin)) return callback(null, true);
+                if (origin.endsWith('.vercel.app')) return callback(null, true);
+                return callback(null, true); // allow all for now
+            },
             methods: ['GET', 'POST'],
             credentials: true,
         },

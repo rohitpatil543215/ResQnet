@@ -26,6 +26,7 @@ const httpServer = createServer(app);
 const allowedOrigins = [
     process.env.CLIENT_URL,
     'http://localhost:3000',
+    'http://localhost:3001',
     'http://localhost:5173',
     'http://127.0.0.1:3000',
     'http://127.0.0.1:5173',
@@ -36,7 +37,9 @@ app.use(cors({
         // Allow requests with no origin (mobile apps, curl, Postman)
         if (!origin) return callback(null, true);
         if (allowedOrigins.includes(origin)) return callback(null, true);
-        // In development, allow all origins
+        // Allow ALL Vercel preview/production URLs
+        if (origin.endsWith('.vercel.app')) return callback(null, true);
+        // In development, allow all
         if (process.env.NODE_ENV !== 'production') return callback(null, true);
         callback(new Error('Not allowed by CORS'));
     },
@@ -88,13 +91,8 @@ app.use((err, req, res, next) => {
 
 // Start server
 async function start() {
-    // Connect DB (auto in-memory if no URI)
     await connectDB();
-
-    // Initialize Socket.io
     initSocket(httpServer);
-
-    // Auto-seed if DB is empty
     await autoSeed();
 
     const PORT = process.env.PORT || 5000;
@@ -102,9 +100,10 @@ async function start() {
         console.log(`\n🚨 ResQNet API running on port ${PORT}`);
         console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
         console.log(`   Health: http://localhost:${PORT}/api/health`);
-        console.log(`\n📧 Login credentials:`);
-        console.log(`   Admin:  admin@resqnet.com / admin123`);
-        console.log(`   User:   aarav.sharma@resqnet.com / password123\n`);
+        console.log(`\n📧 Demo credentials:`);
+        console.log(`   Admin:   admin@resqnet.com / admin123`);
+        console.log(`   Traffic: traffic@resqnet.com / traffic123`);
+        console.log(`   Users:   aarav@resqnet.com / pass123 (and 9 more)\n`);
     });
 }
 
