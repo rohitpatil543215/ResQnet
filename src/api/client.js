@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Production: always use Render backend when deployed on Vercel
+const IS_PROD = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+const API_URL = IS_PROD ? 'https://resqnet-ggxs.onrender.com/api' : (import.meta.env.VITE_API_URL || 'http://localhost:5000/api');
 
 const api = axios.create({
     baseURL: API_URL,

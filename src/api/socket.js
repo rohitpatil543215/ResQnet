@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const IS_PROD = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+const SOCKET_URL = IS_PROD ? 'https://resqnet-ggxs.onrender.com' : (import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000');
 
 let socket = null;
 
